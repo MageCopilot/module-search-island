@@ -1,0 +1,24 @@
+<?php
+/**
+ * MageCopilot Search Island Template
+ *
+ * @var \MageCopilot\SearchIsland\Block\SearchConfig $block
+ */
+if (!$block->isEnabled()) {
+    return;
+}
+$configJson = $block->getFrontendConfigJson();
+?>
+<!-- MageCopilot Search Island Root (Preact Mount Target) -->
+<div id="magecopilot-search-root"></div>
+
+<!-- Safe Read-Only Configuration Payload -->
+<script id="magecopilot-search-config" type="application/json">
+    <?= /* @noEscape */ $configJson ?>
+</script>
+
+<!-- Scoped Styles (Zero bleed into Hyvä Tailwind or Luma LESS) -->
+<link rel="stylesheet" href="<?= $block->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::css/magecopilot-search.css')) ?>" />
+
+<!-- Standalone Micro-Island Bundle (~8KB Gzipped, Deferred execution) -->
+<script defer src="<?= $block->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::js/magecopilot-search.iife.js')) ?>"></script>

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magecopilot" translate="label" sortOrder="500">
+            <label>MageCopilot</label>
+        </tab>
+        <section id="magecopilot_search_island" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Search Island (Hyvä / Luma)</label>
+            <tab>magecopilot</tab>
+            <resource>Magento_Config::config</resource>
+            
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Instant Search Island Configuration</label>
+                
+                <field id="config_notice" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>MageCopilot\SearchIsland\Block\Adminhtml\System\Config\Notice</frontend_model>
+                </field>
+                
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Search Island</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Intercept native search inputs and inject the ultra-fast Preact/Typesense spotlight search modal.</comment>
+                </field>
+                
+                <field id="typesense_host" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Typesense Host</label>
+                    <comment>URL of the Typesense Cluster / Cloud instance (e.g. http://localhost:8108 or your Typesense Cloud URL).</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="public_search_key" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Public Search Key</label>
+                    <comment>Public Search-Only API Key. NEVER use your Admin API key here.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="collection_name" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Collection Name</label>
+                    <comment>Typesense catalog collection name. Default: products.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="placeholder" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Search Input Placeholder</label>
+                    <comment>Placeholder text displayed in the search input field.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="url_suffix" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product URL Suffix</label>
+                    <comment>Suffix appended to product URLs in Magento (usually .html or blank).</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
