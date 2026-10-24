@@ -94,6 +94,9 @@ class SearchConfig extends Template
                 ScopeInterface::SCOPE_STORE
             ) ?: '.html'),
             'baseUrl' => $baseUrl,
+            'telemetryEndpoint' => $baseUrl . '/magecopilot/search/telemetry',
+            'currency' => (string) $store->getCurrentCurrencyCode(),
+            'locale' => (string) ($this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE) ?: 'en_US'),
         ];
     }
 
