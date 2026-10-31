@@ -90,8 +90,8 @@ Navigate to:
 | Parameter | Default | Description |
 | :--- | :--- | :--- |
 | **Enable Search Island** | `Yes` | Toggles the search island on frontend. |
-| **Typesense Host** | `https://cconesa-magecopilot-typesense.hf.space` | HTTPS endpoint of the Typesense cluster. |
-| **Public Search Key** | `mc_search_public_key_2026_always_free` | Read-only scoped API key for public queries. |
+| **Typesense Host** | `http://localhost:8108` | Endpoint of the Typesense cluster (`http://localhost:8108` for self-hosted or `https://[cluster-id].search.magecopilot.com` for Managed Cloud). |
+| **Public Search Key** | *(Required)* | Read-only scoped API key for public front-end queries. |
 | **Collection Name** | `products` | Indexed catalog collection in Typesense. |
 | **Input Placeholder** | `Search by product name, SKU, or category...` | Placeholder text inside modal input. |
 | **Product URL Suffix** | `.html` | Store URL suffix (`.html` or empty). |
@@ -107,8 +107,8 @@ For platforms or headless setups where direct PHP module installation is not req
 <link rel="stylesheet" href="https://store.magecopilot.com/islands/magecopilot-search.css" />
 <script>
   window.MAGECOPILOT_SEARCH_CONFIG = {
-    typesenseHost: "https://cconesa-magecopilot-typesense.hf.space",
-    typesenseKey: "mc_search_public_key_2026_always_free",
+    typesenseHost: "http://localhost:8108", // or "https://[cluster-id].search.magecopilot.com"
+    typesenseKey: "YOUR_SEARCH_ONLY_API_KEY",
     collection: "products",
     urlSuffix: ".html"
   };
