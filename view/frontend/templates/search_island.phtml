@@ -18,7 +18,7 @@ $configJson = $block->getFrontendConfigJson();
 </script>
 
 <!-- Scoped Styles (Zero bleed into Hyvä Tailwind or Luma LESS) -->
-<link rel="stylesheet" href="<?= $block->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::css/magecopilot-search.css')) ?>" />
+<link rel="stylesheet" href="<?= $escaper->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::css/magecopilot-search.css')) ?>" />
 
 <!-- Standalone Micro-Island Bundle (~8KB Gzipped, Deferred execution) -->
-<script defer src="<?= $block->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::js/magecopilot-search.iife.js')) ?>"></script>
+<script defer src="<?= $escaper->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::js/magecopilot-search.iife.js')) ?>"></script>

@@ -9,9 +9,9 @@
             <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         <div>
-            <strong style="color: #d63031; font-size: 14px;"><?= $block->escapeHtml(__('Typesense Credentials Required')) ?></strong>
+            <strong style="color: #d63031; font-size: 14px;"><?= $escaper->escapeHtml(__('Typesense Credentials Required')) ?></strong>
             <p style="margin: 6px 0 0; color: #2d3436; font-size: 13px; line-height: 1.4;">
-                <?= $block->escapeHtml(__('Search Island is enabled, but either the Typesense Host URL or Public Search Key is missing. Search Island will remain inactive on the storefront until valid credentials are provided below.')) ?>
+                <?= $escaper->escapeHtml(__('Search Island is enabled, but either the Typesense Host URL or Public Search Key is missing. Search Island will remain inactive on the storefront until valid credentials are provided below.')) ?>
             </p>
         </div>
     </div>

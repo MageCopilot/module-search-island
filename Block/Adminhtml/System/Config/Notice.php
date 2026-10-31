@@ -19,6 +19,11 @@ class Notice extends Field
 
     private ScopeConfigInterface $scopeConfig;
 
+    /**
+     * @param Context $context
+     * @param ScopeConfigInterface $scopeConfig
+     * @param array<string, mixed> $data
+     */
     public function __construct(
         Context $context,
         ScopeConfigInterface $scopeConfig,

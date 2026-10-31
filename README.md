@@ -5,33 +5,34 @@
 [![License: OSL-3.0](https://img.shields.io/badge/License-OSL--3.0-blue.svg)](https://opensource.org/licenses/OSL-3.0)
 [![Magento 2.4.x / Mage-OS Compatible](https://img.shields.io/badge/Magento-2.4.x%20%7C%20Mage--OS-orange.svg)](https://mage-os.org)
 [![Payload Size](https://img.shields.io/badge/JS%20Payload-8.17KB%20gzipped-success.svg)](https://magecopilot.com)
+[![Packagist](https://img.shields.io/packagist/v/magecopilot/module-search-island.svg)](https://packagist.org/packages/magecopilot/module-search-island)
 
 ---
 
-## 1. Visión General
+## 1. Overview
 
-**MageCopilot Search Island** es la **Feature Puente** oficial de MageCopilot. Permite que tiendas existentes con **Hyvä Themes** o **Luma** reemplacen instantáneamente la búsqueda nativa pesada de Magento (Elasticsearch/OpenSearch/MySQL) por una experiencia tipo Spotlight / Command Palette (`Cmd+K`) ejecutada en memoria RAM en **<4ms vía Typesense C++**.
+**MageCopilot Search Island** is the official acceleration bridge for Magento 2 and Adobe Commerce. It allows stores running **Hyvä Themes** or **Luma** to instantly replace slow, resource-heavy native search (Elasticsearch/OpenSearch/MySQL) with a Spotlight / Command Palette (`Cmd+K`) interface executed directly in RAM in **<4ms via Typesense C++**.
 
-### Beneficios Clave
-- **Velocidad Extrema (<4ms):** Las consultas se resuelven directamente en la memoria del cluster Typesense en el Edge, sin pasar por PHP-FPM ni MySQL.
-- **Cero Fugas de Estilos o JS (Zero-Bleed):** Empaquetado como bundle IIFE de Preact 10 (~8.1 KB gzipped) con CSS estrictamente encapsulado. No interfiere con Tailwind v3/v4 de Hyvä, ni con LESS de Luma, ni con Alpine.js.
-- **Intercepción Automática:** Captura clics y foco en cualquier barra nativa (`#search`, `input[name="q"]`, `.search-input`), previniendo recargas de página lentas.
-- **Navegación por Teclado:** Soporte nativo para atajos universales `Cmd+K` / `Ctrl+K`, `/`, flechas `↑`/`↓` y `Enter` para navegar a la PDP.
-- **No Altera el Checkout:** El cliente permanece en su tienda actual; el carrito y el checkout continúan funcionando exactamente igual.
-
----
-
-## 2. Requisitos
-- PHP 8.1, 8.2, 8.3, 8.4 o 8.5
-- Magento Open Source / Adobe Commerce 2.4.x o Mage-OS 1.x
-- Cluster Typesense activo (o la instancia 24/7 en la nube provista por MageCopilot)
-- Tema Hyvä, Luma, Blank o cualquier tema personalizado.
+### Key Benefits
+- **Sub-4ms Instant Speed:** Queries resolve directly in memory at the Edge without hitting PHP-FPM or MySQL.
+- **Zero Style or JS Bleed:** Packaged as an isolated Preact 10 IIFE bundle (~8.1 KB gzipped) with scoped CSS. Does not conflict with Hyvä Tailwind v3/v4, Luma LESS, or Alpine.js.
+- **Automatic Interception:** Automatically intercepts clicks and keystrokes on native search inputs (`#search`, `input[name="q"]`, `.search-input`).
+- **Universal Keyboard Shortcuts:** Full accessibility support for `Cmd+K` / `Ctrl+K`, `/`, arrow keys `↑`/`↓`, and `Enter`.
+- **Checkout Untouched:** Customers remain on your existing frontend; cart, quote, and checkout workflows continue to operate as usual.
 
 ---
 
-## 3. Instalación
+## 2. Requirements
+- PHP 8.1, 8.2, 8.3, 8.4, or 8.5
+- Magento Open Source / Adobe Commerce 2.4.x or Mage-OS 1.x
+- Active Typesense instance (Self-Hosted via Docker or managed via MageCopilot Memory Grid™)
+- Any theme: Hyvä, Luma, Blank, or custom.
 
-### Opción A: Vía Composer (Recomendado)
+---
+
+## 3. Installation
+
+### Via Composer (Recommended)
 ```bash
 composer require magecopilot/module-search-island
 bin/magento module:enable MageCopilot_SearchIsland
@@ -39,9 +40,9 @@ bin/magento setup:upgrade
 bin/magento cache:clean
 ```
 
-### Opción B: Copia Directa en `app/code`
-1. Clonar o copiar este directorio en `app/code/MageCopilot/SearchIsland`.
-2. Habilitar el módulo:
+### Manual Installation
+1. Clone or copy this repository into `app/code/MageCopilot/SearchIsland`.
+2. Enable and register the module:
    ```bash
    bin/magento module:enable MageCopilot_SearchIsland
    bin/magento setup:upgrade
@@ -50,25 +51,56 @@ bin/magento cache:clean
 
 ---
 
-## 4. Configuración en el Admin Panel
+## 4. Typesense Infrastructure Options
 
-Accede en tu panel de administración a:
-👉 **Stores > Configuration > MageCopilot > Search Island (Hyvä / Luma)**
+You can either run your own self-hosted Typesense instance for free, or connect to MageCopilot's managed cloud.
 
-| Parámetro | Valor por Defecto | Descripción |
-| :--- | :--- | :--- |
-| **Enable Search Island** | `Yes` | Activa o desactiva la micro-isla en el frontend. |
-| **Typesense Host** | `https://cconesa-magecopilot-typesense.hf.space` | URL HTTPS del cluster Typesense. |
-| **Public Search Key** | `mc_search_public_key_2026_always_free` | API Key de solo lectura para búsquedas públicas. |
-| **Collection Name** | `products` | Nombre de la colección indexada en Typesense. |
-| **Input Placeholder** | `Search by product name, SKU, or category...` | Texto guía dentro del modal. |
-| **Product URL Suffix** | `.html` | Sufijo configurado en tu catálogo (ej. `.html` o vacío). |
+### Option A: Self-Hosted Typesense (Free & Open-Source)
+Run Typesense locally or on your own VPS with Docker:
+
+```yaml
+# docker-compose.typesense.yml
+version: '3.8'
+services:
+  typesense:
+    image: typesense/typesense:27.1
+    container_name: magecopilot_typesense
+    restart: unless-stopped
+    ports:
+      - "8108:8108"
+    volumes:
+      - typesense_data:/data
+    command: '--data-dir /data --api-key=YOUR_TYPESENSE_API_KEY --enable-cors=true'
+
+volumes:
+  typesense_data:
+```
+
+### Option B: MageCopilot Memory Grid™ Managed Cloud ($99/mo)
+For production stores requiring zero DevOps, high availability, daily catalog backups, and automated SSL:
+👉 **[Get Managed Cloud on MageCopilot.com](https://magecopilot.com/products/search-island)**
 
 ---
 
-## 5. Opción Drop-in Universal (Sin PHP / CDN / Google Tag Manager)
+## 5. Admin Panel Configuration
 
-Para tiendas en plataformas externas o implementaciones sin acceso al servidor Magento, puede insertarse directamente en el HTML:
+Navigate to:  
+👉 **Stores > Configuration > MageCopilot > Search Island (Hyvä / Luma)**
+
+| Parameter | Default | Description |
+| :--- | :--- | :--- |
+| **Enable Search Island** | `Yes` | Toggles the search island on frontend. |
+| **Typesense Host** | `https://cconesa-magecopilot-typesense.hf.space` | HTTPS endpoint of the Typesense cluster. |
+| **Public Search Key** | `mc_search_public_key_2026_always_free` | Read-only scoped API key for public queries. |
+| **Collection Name** | `products` | Indexed catalog collection in Typesense. |
+| **Input Placeholder** | `Search by product name, SKU, or category...` | Placeholder text inside modal input. |
+| **Product URL Suffix** | `.html` | Store URL suffix (`.html` or empty). |
+
+---
+
+## 6. Universal CDN Drop-in (Optional / Headless / GTM)
+
+For platforms or headless setups where direct PHP module installation is not required:
 
 ```html
 <!-- MageCopilot Search Island Drop-in -->
@@ -86,23 +118,24 @@ Para tiendas en plataformas externas o implementaciones sin acceso al servidor M
 
 ---
 
-## 6. API JavaScript Global
+## 7. Global JavaScript API
 
-La micro-isla expone métodos de control en `window.MageCopilotSearch`:
+Control the modal programmatically via `window.MageCopilotSearch`:
+
 ```javascript
-// Abrir el modal desde cualquier botón personalizado
+// Open modal
 window.MageCopilotSearch.open();
 
-// Cerrar el modal
+// Close modal
 window.MageCopilotSearch.close();
 
-// O mediante eventos personalizados del DOM:
+// Or dispatch universal DOM events:
 window.dispatchEvent(new CustomEvent('magecopilot:search:open'));
-window.dispatchEvent(new CustomEvent('magecopilot:search:close'));
 ```
 
 ---
 
-## 7. Licencia y Soporte
-Desarrollado y mantenido por el equipo de **MageCopilot** ([https://magecopilot.com](https://magecopilot.com)).
-Licencia Open Software License (OSL-3.0).
+## 8. License & Commercial Support
+
+Licensed under the **Open Software License v. 3.0 (OSL-3.0)**.  
+For enterprise SLAs, multi-store support, and managed Memory Grid™ clusters, visit [magecopilot.com](https://magecopilot.com).
