@@ -9,6 +9,16 @@ if (!$block->isEnabled()) {
 }
 $configJson = $block->getFrontendConfigJson();
 ?>
+<!-- Hide native search blocks while Search Island is online (removed on Circuit Breaker fallback) -->
+<style id="mc-srp-hide-native">
+    .column.main > .search.results,
+    .columns .sidebar-main .block.filter,
+    .columns .sidebar .block.filter,
+    #layered-filter-block {
+        display: none !important;
+    }
+</style>
+
 <!-- MageCopilot Search Island SRP Mount Target -->
 <div id="magecopilot-srp-root"></div>
 

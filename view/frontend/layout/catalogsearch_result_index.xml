@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- Remove native slow Elasticsearch / OpenSearch rendering blocks -->
-        <referenceBlock name="search.result" remove="true" />
-        <referenceBlock name="catalogsearch.leftnav" remove="true" />
-
-        <!-- Mount MageCopilot Search Island Full SRP (Preact Micro-Island) -->
+        <!-- Mount MageCopilot Search Island Full SRP (Preact Micro-Island) with graceful native fallback -->
         <referenceContainer name="content">
             <block class="MageCopilot\SearchIsland\Block\SearchConfig"
                    name="magecopilot.search.srp"

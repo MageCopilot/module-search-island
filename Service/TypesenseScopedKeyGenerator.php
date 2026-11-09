@@ -44,7 +44,8 @@ class TypesenseScopedKeyGenerator
             $excludeFields[] = 'price_group_2';
             $excludeFields[] = 'price_group_3';
         } else {
-            // Company field isolation: isolate other customer group prices
+            // Company field isolation: exclude multi-group map and isolate other customer group prices
+            $excludeFields[] = 'group_prices';
             for ($g = 1; $g <= 3; $g++) {
                 if ($g !== $customerGroupId) {
                     $excludeFields[] = "price_group_{$g}";

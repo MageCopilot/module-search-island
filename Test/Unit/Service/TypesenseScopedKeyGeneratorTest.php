@@ -84,7 +84,7 @@ class TypesenseScopedKeyGeneratorTest extends TestCase
         $this->assertSame('store_ids:=[2] && is_in_stock:=[true]', $params['filter_by']);
         $this->assertArrayHasKey('exclude_fields', $params);
         $this->assertSame(
-            'embedding,internal_margin,cost_price,supplier_sku,price_group_1,price_group_3',
+            'embedding,internal_margin,cost_price,supplier_sku,group_prices,price_group_1,price_group_3',
             $params['exclude_fields']
         );
         $this->assertSame(250, $params['limit_hits']);

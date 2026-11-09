@@ -99,7 +99,7 @@ class SearchIslandDataTest extends TestCase
         $this->assertSame('store_ids:=[1] && is_in_stock:=[true]', $decoded['params']['filter_by']);
         $this->assertArrayHasKey('exclude_fields', $decoded['params']);
         $this->assertSame(
-            'embedding,internal_margin,cost_price,supplier_sku,price_group_1,price_group_3',
+            'embedding,internal_margin,cost_price,supplier_sku,group_prices,price_group_1,price_group_3',
             $decoded['params']['exclude_fields']
         );
     }
