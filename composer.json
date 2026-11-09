@@ -3,6 +3,18 @@
     "description": "Drop-in <4ms In-Memory Search Island for Hyvä Themes & Luma powered by Typesense & Preact",
     "type": "magento2-module",
     "license": "OSL-3.0",
+    "homepage": "https://magecopilot.com",
+    "keywords": [
+        "magento2",
+        "mage-os",
+        "adobe-commerce",
+        "typesense",
+        "search",
+        "search-island",
+        "preact",
+        "hyva",
+        "luma"
+    ],
     "authors": [
         {
             "name": "MageCopilot Team",
@@ -10,6 +22,10 @@
             "homepage": "https://magecopilot.com"
         }
     ],
+    "support": {
+        "issues": "https://github.com/MageCopilot/module-search-island/issues",
+        "source": "https://github.com/MageCopilot/module-search-island"
+    },
     "require": {
         "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
         "magento/framework": "^103.0",
