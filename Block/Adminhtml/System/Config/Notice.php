@@ -15,14 +15,21 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Notice extends Field
 {
+    /**
+     * @var string
+     */
     protected $_template = 'MageCopilot_SearchIsland::system/config/notice.phtml';
 
+    /**
+     * @var ScopeConfigInterface
+     */
     private ScopeConfigInterface $scopeConfig;
 
     /**
      * @param Context $context
      * @param ScopeConfigInterface $scopeConfig
-     * @param array<string, mixed> $data
+     * @param array $data
+     * @phpstan-param array<string, mixed> $data
      */
     public function __construct(
         Context $context,
@@ -35,6 +42,9 @@ class Notice extends Field
 
     /**
      * Render the warning notice row if credentials are missing while enabled.
+     *
+     * @param AbstractElement $element
+     * @return string
      */
     public function render(AbstractElement $element): string
     {
@@ -53,8 +63,15 @@ class Notice extends Field
             ScopeInterface::SCOPE_STORE
         ));
 
-        // If not enabled or if both host and key are present, do not render warning
-        if (!$enabled || (!empty($host) && !empty($key))) {
+        $parentKey = trim((string) $this->scopeConfig->getValue(
+            'magecopilot_search_island/general/typesense_parent_search_key',
+            ScopeInterface::SCOPE_STORE
+        ));
+
+        $hasSearchKey = !empty($key) || !empty($parentKey);
+
+        // If not enabled or if both host and a valid search key are present, do not render warning
+        if (!$enabled || (!empty($host) && $hasSearchKey)) {
             return '';
         }
 

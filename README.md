@@ -1,38 +1,35 @@
-# MageCopilot Search Island (`magecopilot/module-search-island`)
-
-> **Drop-in <4ms In-Memory Search Island for Hyvä Themes & Luma powered by Typesense & Preact.**
+# MageCopilot Search Island
 
 [![License: OSL-3.0](https://img.shields.io/badge/License-OSL--3.0-blue.svg)](https://opensource.org/licenses/OSL-3.0)
-[![Magento 2.4.x / Mage-OS Compatible](https://img.shields.io/badge/Magento-2.4.x%20%7C%20Mage--OS-orange.svg)](https://mage-os.org)
-[![Payload Size](https://img.shields.io/badge/JS%20Payload-8.17KB%20gzipped-success.svg)](https://magecopilot.com)
 [![Packagist](https://img.shields.io/packagist/v/magecopilot/module-search-island.svg)](https://packagist.org/packages/magecopilot/module-search-island)
 
----
+Fast, lightweight search island for Magento 2, Adobe Commerce, and Mage-OS storefronts running Hyvä Themes or Luma, powered by Preact and Typesense.
 
-## 1. Overview
+## Overview
 
-**MageCopilot Search Island** is the official acceleration bridge for Magento 2 and Adobe Commerce. It allows stores running **Hyvä Themes** or **Luma** to instantly replace slow, resource-heavy native search (Elasticsearch/OpenSearch/MySQL) with a Spotlight / Command Palette (`Cmd+K`) interface executed directly in RAM in **<4ms via Typesense C++**.
+MageCopilot_SearchIsland replaces the default store search input with an instant modal dialog (Command Palette / Spotlight style triggered via `Cmd+K` or search input click). Queries are resolved directly against an in-memory Typesense cluster in milliseconds.
 
-### Key Benefits
-- **Sub-4ms Instant Speed:** Queries resolve directly in memory at the Edge without hitting PHP-FPM or MySQL.
-- **Zero Style or JS Bleed:** Packaged as an isolated Preact 10 IIFE bundle (~8.1 KB gzipped) with scoped CSS. Does not conflict with Hyvä Tailwind v3/v4, Luma LESS, or Alpine.js.
-- **Automatic Interception:** Automatically intercepts clicks and keystrokes on native search inputs (`#search`, `input[name="q"]`, `.search-input`).
-- **Universal Keyboard Shortcuts:** Full accessibility support for `Cmd+K` / `Ctrl+K`, `/`, arrow keys `↑`/`↓`, and `Enter`.
-- **Checkout Untouched:** Customers remain on your existing frontend; cart, quote, and checkout workflows continue to operate as usual.
+The frontend bundle is compiled as a self-contained Preact IIFE (~12 KB gzipped) with scoped styles, preventing CSS or JavaScript conflicts with Hyvä Tailwind, Luma LESS, or Alpine.js.
 
----
+## Key Features
 
-## 2. Requirements
-- PHP 8.1, 8.2, 8.3, 8.4, or 8.5
-- Magento Open Source / Adobe Commerce 2.4.x or Mage-OS 1.x
-- Active Typesense instance (Self-Hosted via Docker or managed via MageCopilot Memory Grid™)
-- Any theme: Hyvä, Luma, Blank, or custom.
+- Fast Search Queries: Requests hit Typesense memory directly without invoking PHP-FPM, MySQL, or Elasticsearch on keystrokes.
+- Cryptographic Scoped Search Keys: Uses HMAC-SHA256 scoped keys to restrict front-end query permissions. Wholesale prices, internal margins, and embedding vectors are excluded for guest users.
+- Graceful Fallback: Built-in circuit breaker detects connection timeouts or network errors. If Typesense is unreachable, queries automatically fall back to the native Magento search results page.
+- Keyboard Navigation: Supports `Cmd+K` / `Ctrl+K`, forward slash (`/`), Up/Down arrow keys, and `Enter`.
+- Zero Core Overwrites: Cart, quote, customer account, and checkout flows remain completely untouched.
 
----
+## Compatibility
 
-## 3. Installation
+- Magento Open Source / Adobe Commerce 2.4.4+
+- Mage-OS 1.0+
+- Hyvä Themes (1.2+, 1.3+), Luma, Blank, or custom themes
+- Typesense 27.0+ or 30.2+
 
-### Via Composer (Recommended)
+## Installation
+
+Install using Composer:
+
 ```bash
 composer require magecopilot/module-search-island
 bin/magento module:enable MageCopilot_SearchIsland
@@ -40,102 +37,73 @@ bin/magento setup:upgrade
 bin/magento cache:clean
 ```
 
-### Manual Installation
-1. Clone or copy this repository into `app/code/MageCopilot/SearchIsland`.
-2. Enable and register the module:
-   ```bash
-   bin/magento module:enable MageCopilot_SearchIsland
-   bin/magento setup:upgrade
-   bin/magento cache:clean
-   ```
+## Typesense Setup
 
----
-
-## 4. Typesense Infrastructure Options
-
-You can either run your own self-hosted Typesense instance for free, or connect to MageCopilot's managed cloud.
-
-### Option A: Self-Hosted Typesense (Free & Open-Source)
-Run Typesense locally or on your own VPS with Docker:
+You can run Typesense on the same host or a dedicated server using Docker:
 
 ```yaml
-# docker-compose.typesense.yml
 version: '3.8'
 services:
   typesense:
-    image: typesense/typesense:27.1
-    container_name: magecopilot_typesense
+    image: typesense/typesense:30.2
+    container_name: typesense
     restart: unless-stopped
     ports:
       - "8108:8108"
     volumes:
       - typesense_data:/data
-    command: '--data-dir /data --api-key=YOUR_TYPESENSE_API_KEY --enable-cors=true'
+    command: '--data-dir /data --api-key=YOUR_ADMIN_API_KEY --enable-cors=true'
 
 volumes:
   typesense_data:
 ```
 
-### Option B: MageCopilot Memory Grid™ Managed Cloud ($99/mo)
-For production stores requiring zero DevOps, high availability, daily catalog backups, and automated SSL:
-👉 **[Get Managed Cloud on MageCopilot.com](https://magecopilot.com/products/search-island)**
+## Admin Configuration
 
----
+In the Magento Admin Panel, navigate to:
+**Stores > Configuration > MageCopilot > Search Island (Hyvä / Luma)**
 
-## 5. Admin Panel Configuration
-
-Navigate to:  
-👉 **Stores > Configuration > MageCopilot > Search Island (Hyvä / Luma)**
-
-| Parameter | Default | Description |
+| Setting | Default | Description |
 | :--- | :--- | :--- |
-| **Enable Search Island** | `Yes` | Toggles the search island on frontend. |
-| **Typesense Host** | `http://localhost:8108` | Endpoint of the Typesense cluster (`http://localhost:8108` for self-hosted or `https://[cluster-id].search.magecopilot.com` for Managed Cloud). |
-| **Public Search Key** | *(Required)* | Read-only scoped API key for public front-end queries. |
-| **Collection Name** | `products` | Indexed catalog collection in Typesense. |
-| **Input Placeholder** | `Search by product name, SKU, or category...` | Placeholder text inside modal input. |
-| **Product URL Suffix** | `.html` | Store URL suffix (`.html` or empty). |
+| Enable Search Island | Yes | Enables or disables the frontend search modal. |
+| Typesense Host | `http://localhost:8108` | URL of the Typesense cluster. |
+| Parent / Admin Search Key | Empty | Master search key used by Magento to generate scoped search tokens. |
+| Public Search Key | Empty | Static read-only search key (used if parent key generation is disabled). |
+| Collection Name | `products` | Typesense collection storing catalog documents. |
+| Input Placeholder | `Search by product name, SKU, or category...` | Placeholder text inside the search modal. |
+| Product URL Suffix | `.html` | Product URL suffix configured for your store. |
 
----
+## JavaScript Events and API
 
-## 6. Universal CDN Drop-in (Optional / Headless / GTM)
-
-For platforms or headless setups where direct PHP module installation is not required:
-
-```html
-<!-- MageCopilot Search Island Drop-in -->
-<link rel="stylesheet" href="https://store.magecopilot.com/islands/magecopilot-search.css" />
-<script>
-  window.MAGECOPILOT_SEARCH_CONFIG = {
-    typesenseHost: "http://localhost:8108", // or "https://[cluster-id].search.magecopilot.com"
-    typesenseKey: "YOUR_SEARCH_ONLY_API_KEY",
-    collection: "products",
-    urlSuffix: ".html"
-  };
-</script>
-<script defer src="https://store.magecopilot.com/islands/magecopilot-search.iife.js"></script>
-```
-
----
-
-## 7. Global JavaScript API
-
-Control the modal programmatically via `window.MageCopilotSearch`:
+You can open or close the modal programmatically:
 
 ```javascript
-// Open modal
+// Open the modal
 window.MageCopilotSearch.open();
 
-// Close modal
+// Close the modal
 window.MageCopilotSearch.close();
 
-// Or dispatch universal DOM events:
+// Or dispatch custom DOM events
 window.dispatchEvent(new CustomEvent('magecopilot:search:open'));
+window.dispatchEvent(new CustomEvent('magecopilot:search:close'));
 ```
 
----
+## Testing
 
-## 8. License & Commercial Support
+Run unit tests via PHPUnit:
 
-Licensed under the **Open Software License v. 3.0 (OSL-3.0)**.  
-For enterprise SLAs, multi-store support, and managed Memory Grid™ clusters, visit [magecopilot.com](https://magecopilot.com).
+```bash
+vendor/bin/phpunit -c dev/tests/unit/phpunit.xml app/code/MageCopilot/SearchIsland/Test/Unit
+```
+
+Run static analysis:
+
+```bash
+vendor/bin/phpstan analyse --level 1 app/code/MageCopilot/SearchIsland
+vendor/bin/phpcs --standard=Magento2 app/code/MageCopilot/SearchIsland
+```
+
+## License
+
+Open Software License v3.0 (OSL-3.0).

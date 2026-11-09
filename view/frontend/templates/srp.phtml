@@ -17,8 +17,12 @@ $configJson = $block->getFrontendConfigJson();
     <?= /* @noEscape */ $configJson ?>
 </script>
 
+<?php
+$cssUrl = $block->getViewFileUrl('MageCopilot_SearchIsland::css/magecopilot-search.css');
+$jsUrl = $block->getViewFileUrl('MageCopilot_SearchIsland::js/magecopilot-search.iife.js');
+?>
 <!-- Scoped Styles (Zero bleed into Hyvä Tailwind or Luma LESS) -->
-<link rel="stylesheet" href="<?= $escaper->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::css/magecopilot-search.css')) ?>" />
+<link rel="stylesheet" href="<?= $escaper->escapeUrl($cssUrl) ?>" />
 
 <!-- Standalone Micro-Island Bundle (Deferred execution) -->
-<script defer src="<?= $escaper->escapeUrl($block->getViewFileUrl('MageCopilot_SearchIsland::js/magecopilot-search.iife.js')) ?>"></script>
+<script defer src="<?= $escaper->escapeUrl($jsUrl) ?>"></script>

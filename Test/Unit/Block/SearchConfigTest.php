@@ -16,22 +16,29 @@ use PHPUnit\Framework\TestCase;
 
 class SearchConfigTest extends TestCase
 {
-    /** @var Context|MockObject */
-    private $contextMock;
+    /** @var Context&MockObject */
+    private MockObject $contextMock;
 
-    /** @var ScopeConfigInterface|MockObject */
-    private $scopeConfigMock;
+    /** @var ScopeConfigInterface&MockObject */
+    private MockObject $scopeConfigMock;
 
-    /** @var StoreManagerInterface|MockObject */
-    private $storeManagerMock;
+    /** @var StoreManagerInterface&MockObject */
+    private MockObject $storeManagerMock;
 
-    /** @var StoreInterface|MockObject */
-    private $storeMock;
+    /** @var StoreInterface&MockObject */
+    private MockObject $storeMock;
 
-    /** @var EncryptorInterface|MockObject */
-    private $encryptorMock;
+    /** @var EncryptorInterface&MockObject */
+    private MockObject $encryptorMock;
 
+    /**
+     * @var TypesenseScopedKeyGenerator
+     */
     private TypesenseScopedKeyGenerator $keyGenerator;
+
+    /**
+     * @var SearchConfig
+     */
     private SearchConfig $block;
 
     private const PARENT_KEY = 'mcp_master_search_parent_secret_key_xyz';
@@ -39,11 +46,11 @@ class SearchConfigTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextMock = $this->createStub(Context::class);
-        $this->scopeConfigMock = $this->createStub(ScopeConfigInterface::class);
-        $this->storeManagerMock = $this->createStub(StoreManagerInterface::class);
-        $this->storeMock = $this->createStub(Store::class);
-        $this->encryptorMock = $this->createStub(EncryptorInterface::class);
+        $this->contextMock = $this->createMock(Context::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeMock = $this->createMock(Store::class);
+        $this->encryptorMock = $this->createMock(EncryptorInterface::class);
         $this->keyGenerator = new TypesenseScopedKeyGenerator();
 
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
@@ -99,7 +106,9 @@ class SearchConfigTest extends TestCase
         // Decode the generated scoped key and verify it contains guest rules and 7-day TTL
         $decoded = $this->keyGenerator->decodeScopedKey($config['typesenseKey']);
         $this->assertSame('store_ids:=[1] && is_in_stock:=[true]', $decoded['params']['filter_by']);
-        $this->assertSame('internal_margin,cost_price,supplier_sku', $decoded['params']['exclude_fields']);
+        $expectedExclude = 'embedding,internal_margin,cost_price,supplier_sku,' .
+            'group_prices,tier_prices,price_group_1,price_group_2,price_group_3';
+        $this->assertSame($expectedExclude, $decoded['params']['exclude_fields']);
 
         $expectedMinExpires = (int) (ceil(time() / 86400) * 86400) + 604800;
         $this->assertSame($expectedMinExpires, $decoded['params']['expires_at']);

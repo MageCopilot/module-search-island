@@ -15,33 +15,40 @@ use PHPUnit\Framework\TestCase;
 
 class SearchIslandDataTest extends TestCase
 {
-    /** @var CustomerSession|MockObject */
-    private $customerSessionMock;
+    /** @var CustomerSession&MockObject */
+    private MockObject $customerSessionMock;
 
-    /** @var StoreManagerInterface|MockObject */
-    private $storeManagerMock;
+    /** @var StoreManagerInterface&MockObject */
+    private MockObject $storeManagerMock;
 
-    /** @var StoreInterface|MockObject */
-    private $storeMock;
+    /** @var StoreInterface&MockObject */
+    private MockObject $storeMock;
 
-    /** @var ScopeConfigInterface|MockObject */
-    private $scopeConfigMock;
+    /** @var ScopeConfigInterface&MockObject */
+    private MockObject $scopeConfigMock;
 
-    /** @var EncryptorInterface|MockObject */
-    private $encryptorMock;
+    /** @var EncryptorInterface&MockObject */
+    private MockObject $encryptorMock;
 
+    /**
+     * @var TypesenseScopedKeyGenerator
+     */
     private TypesenseScopedKeyGenerator $keyGenerator;
+
+    /**
+     * @var SearchIslandData
+     */
     private SearchIslandData $sectionData;
 
     private const SAMPLE_PARENT_KEY = 'mcp_master_search_parent_secret_key_777';
 
     protected function setUp(): void
     {
-        $this->customerSessionMock = $this->createStub(CustomerSession::class);
-        $this->storeManagerMock = $this->createStub(StoreManagerInterface::class);
-        $this->storeMock = $this->createStub(StoreInterface::class);
-        $this->scopeConfigMock = $this->createStub(ScopeConfigInterface::class);
-        $this->encryptorMock = $this->createStub(EncryptorInterface::class);
+        $this->customerSessionMock = $this->createMock(CustomerSession::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeMock = $this->createMock(StoreInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->encryptorMock = $this->createMock(EncryptorInterface::class);
         $this->keyGenerator = new TypesenseScopedKeyGenerator();
 
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
@@ -90,6 +97,10 @@ class SearchIslandDataTest extends TestCase
 
         $decoded = $this->keyGenerator->decodeScopedKey($result['typesense_scoped_key']);
         $this->assertSame('store_ids:=[1] && is_in_stock:=[true]', $decoded['params']['filter_by']);
-        $this->assertArrayNotHasKey('exclude_fields', $decoded['params']);
+        $this->assertArrayHasKey('exclude_fields', $decoded['params']);
+        $this->assertSame(
+            'embedding,internal_margin,cost_price,supplier_sku,price_group_1,price_group_3',
+            $decoded['params']['exclude_fields']
+        );
     }
 }

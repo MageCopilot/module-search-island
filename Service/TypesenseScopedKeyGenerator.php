@@ -34,15 +34,30 @@ class TypesenseScopedKeyGenerator
         // Align expiration with midnight boundary for deterministic cache hits
         $expiresAt = (int) (ceil(time() / 86400) * 86400) + $ttlSeconds;
 
+        $excludeFields = ['embedding', 'internal_margin', 'cost_price', 'supplier_sku'];
+
+        // Strict B2B isolation: guest users cannot view wholesale group prices or tier structures
+        if ($customerGroupId === 0) {
+            $excludeFields[] = 'group_prices';
+            $excludeFields[] = 'tier_prices';
+            $excludeFields[] = 'price_group_1';
+            $excludeFields[] = 'price_group_2';
+            $excludeFields[] = 'price_group_3';
+        } else {
+            // Company field isolation: isolate other customer group prices
+            for ($g = 1; $g <= 3; $g++) {
+                if ($g !== $customerGroupId) {
+                    $excludeFields[] = "price_group_{$g}";
+                }
+            }
+        }
+
         $embeddedParams = [
             'filter_by' => sprintf('store_ids:=[%d] && is_in_stock:=[true]', $storeId),
+            'exclude_fields' => implode(',', array_values(array_unique($excludeFields))),
+            'limit_hits' => 250,
             'expires_at' => $expiresAt
         ];
-
-        // Strict field selection: guests cannot request internal administrative fields
-        if ($customerGroupId === 0) {
-            $embeddedParams['exclude_fields'] = 'internal_margin,cost_price,supplier_sku';
-        }
 
         $paramsJson = (string) json_encode($embeddedParams, JSON_UNESCAPED_SLASHES);
         $digest = base64_encode(hash_hmac('sha256', $paramsJson, $parentSearchKey, true));
