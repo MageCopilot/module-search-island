@@ -25,3 +25,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scoped search key generation with HMAC-SHA256 signature support.
 - Native theme compatibility with Hyvä Themes and Luma.
 - Customer session data section for client-side search key retrieval.
+
