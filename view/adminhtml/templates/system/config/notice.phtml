@@ -1,6 +1,9 @@
 <?php
 /** @var \MageCopilot\SearchIsland\Block\Adminhtml\System\Config\Notice $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$mode = $block->getNoticeMode();
 ?>
+<?php if ($mode === \MageCopilot\SearchIsland\Block\Adminhtml\System\Config\Notice::MODE_MISSING_CREDENTIALS): ?>
 <div class="message message-warning"
      style="margin-bottom: 20px; border-left: 5px solid #e17055; background: #fff5f2; padding: 14px 18px;">
     <div style="display: flex; align-items: flex-start; gap: 12px;">
@@ -24,3 +27,38 @@
         </div>
     </div>
 </div>
+<?php else: ?>
+    <?php
+    $isManaged = ($mode === \MageCopilot\SearchIsland\Block\Adminhtml\System\Config\Notice::MODE_MANAGED_CLOUD);
+    $isLocal = ($mode === \MageCopilot\SearchIsland\Block\Adminhtml\System\Config\Notice::MODE_SELF_HOSTED_LOCAL);
+    $badgeText = $isManaged
+        ? __('Active Endpoint Mode: Managed Memory Grid Cloud')
+        : ($isLocal
+            ? __('Active Endpoint Mode: Self-Hosted / Local Docker')
+            : __('Active Endpoint Mode: Self-Hosted Remote Node'));
+    $bodyText = $isManaged
+        ? __(
+            'Connected to Managed Memory Grid cluster. All SearchIsland OSL-3.0 '
+            . 'capabilities operate in full-speed mode.'
+        )
+        : __(
+            'Self-hosted Typesense endpoint detected. SearchIsland operates 100% '
+            . 'free and unlocked under OSL-3.0.'
+        );
+    $accentColor = $isManaged ? '#0f766e' : '#0284c7';
+    $bgColor = $isManaged ? '#f0fdfa' : '#f0f9ff';
+    $boxStyle = sprintf(
+        'margin-bottom: 16px; border-left: 4px solid %s; background: %s; padding: 11px 16px;',
+        $accentColor,
+        $bgColor
+    );
+    ?>
+<div class="message message-info" style="<?= $escaper->escapeHtmlAttr($boxStyle) ?>">
+    <strong style="color: <?= $escaper->escapeHtmlAttr($accentColor) ?>; font-size: 13px;">
+        <?= $escaper->escapeHtml($badgeText) ?>
+    </strong>
+    <p style="margin: 4px 0 0; color: #334155; font-size: 12px; line-height: 1.4;">
+        <?= $escaper->escapeHtml($bodyText) ?>
+    </p>
+</div>
+<?php endif; ?>
