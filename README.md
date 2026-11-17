@@ -73,6 +73,8 @@ In the Magento Admin Panel, navigate to:
 | Input Placeholder | `Search by product name, SKU, or category...` | Placeholder text inside the search modal. |
 | Product URL Suffix | `.html` | Product URL suffix configured for your store. |
 
+The configuration panel also displays a live **Endpoint Mode** notice (`Managed Memory Grid Cloud`, `Local Self-Hosted Docker`, or `Custom Remote Node`) based on the configured Typesense Host. All features run cleanly with local or self-hosted Typesense clusters under OSL-3.0.
+
 ## JavaScript Events and API
 
 You can open or close the modal programmatically:
@@ -94,7 +96,7 @@ window.dispatchEvent(new CustomEvent('magecopilot:search:close'));
 Run unit tests via PHPUnit:
 
 ```bash
-vendor/bin/phpunit -c dev/tests/unit/phpunit.xml app/code/MageCopilot/SearchIsland/Test/Unit
+vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/MageCopilot/SearchIsland/Test/Unit
 ```
 
 Run static analysis:
